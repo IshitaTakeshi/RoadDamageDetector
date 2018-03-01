@@ -1,10 +1,9 @@
 apt update; apt upgrade; apt install sudo git vim zsh python3 zip
 wget https://bootstrap.pypa.io/get-pip.py
 python3 get-pip.py
-sudo apt install python3-dev
+apt install python3-dev
 pip3 install cupy chainer chainercv
-pip3 install matplotlib
-apt install python3-tk
-jupyter notebook --ip 0.0.0.0 --port 9999 --allow-root
-apt install libglib-dev libglib2.0-dev
-pip3 install opencv-python
+apt install python3-tk libglib2.0-0 libsm-dev
+pip3 install matplotlib opencv-python
+wget -c https://s3-ap-northeast-1.amazonaws.com/mycityreport/RoadDamageDataset.tar.gz
+tar xvf RoadDamageDataset.tar.gz
