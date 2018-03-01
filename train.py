@@ -135,7 +135,7 @@ def main():
         RoadDamageDataset(data_dir, split='train'),
         Transform(model.coder, model.insize, model.mean)
     )
-    train_iter = chainer.iterators.MultiprocessIterator(train, args.batchsize)
+    train_iter = chainer.iterators.SerialIterator(train, args.batchsize)
 
     test = RoadDamageDataset(data_dir, split='val')
     test_iter = chainer.iterators.SerialIterator(
@@ -154,13 +154,13 @@ def main():
     trainer = training.Trainer(updater, (12000, 'iteration'), args.out)
     trainer.extend(
         extensions.ExponentialShift('lr', 0.1, init=1e-3),
-        trigger=triggers.ManualScheduleTrigger([80000, 100000], 'iteration'))
+        trigger=triggers.ManualScheduleTrigger([8000, 10000], 'iteration'))
 
     trainer.extend(
         DetectionVOCEvaluator(
             test_iter, model, use_07_metric=True,
             label_names=roaddamage_label_names),
-        trigger=(500, 'iteration'))
+        trigger=(100, 'iteration'))
 
     log_interval = 10, 'iteration'
     trainer.extend(extensions.LogReport(trigger=log_interval))
@@ -170,16 +170,18 @@ def main():
          'main/loss', 'main/loss/loc', 'main/loss/conf',
          'validation/main/map']),
         trigger=log_interval)
-    trainer.extend(extensions.ProgressBar(update_interval=10))
 
-    trainer.extend(extensions.snapshot(), trigger=(500, 'iteration'))
+    trainer.extend(extensions.ProgressBar())
+
+    trainer.extend(extensions.snapshot(), trigger=(100, 'iteration'))
     trainer.extend(
         extensions.snapshot_object(model, 'model_iter_{.updater.iteration}'),
-        trigger=(500, 'iteration'))
+        trigger=(100, 'iteration'))
 
     if args.resume:
         serializers.load_npz(args.resume, trainer)
 
+    print("setup finished")
     trainer.run()
 
     model.to_cpu()
