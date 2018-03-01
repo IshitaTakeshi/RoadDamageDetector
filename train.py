@@ -151,7 +151,7 @@ def main():
             param.update_rule.add_hook(WeightDecay(0.0005))
 
     updater = training.StandardUpdater(train_iter, optimizer, device=args.gpu)
-    trainer = training.Trainer(updater, (120000, 'iteration'), args.out)
+    trainer = training.Trainer(updater, (12000, 'iteration'), args.out)
     trainer.extend(
         extensions.ExponentialShift('lr', 0.1, init=1e-3),
         trigger=triggers.ManualScheduleTrigger([80000, 100000], 'iteration'))
@@ -160,7 +160,7 @@ def main():
         DetectionVOCEvaluator(
             test_iter, model, use_07_metric=True,
             label_names=roaddamage_label_names),
-        trigger=(10000, 'iteration'))
+        trigger=(500, 'iteration'))
 
     log_interval = 10, 'iteration'
     trainer.extend(extensions.LogReport(trigger=log_interval))
@@ -172,15 +172,18 @@ def main():
         trigger=log_interval)
     trainer.extend(extensions.ProgressBar(update_interval=10))
 
-    trainer.extend(extensions.snapshot(), trigger=(10000, 'iteration'))
+    trainer.extend(extensions.snapshot(), trigger=(500, 'iteration'))
     trainer.extend(
         extensions.snapshot_object(model, 'model_iter_{.updater.iteration}'),
-        trigger=(120000, 'iteration'))
+        trigger=(500, 'iteration'))
 
     if args.resume:
         serializers.load_npz(args.resume, trainer)
 
     trainer.run()
+
+    model.to_cpu()
+    serializers.save_npz("model.npz", model)
 
 
 if __name__ == '__main__':
