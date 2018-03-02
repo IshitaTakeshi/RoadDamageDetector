@@ -11,7 +11,6 @@ from chainer import training
 from chainer.training import extensions
 from chainer.training import triggers
 
-from chainercv.datasets import voc_bbox_label_names
 from chainercv.extensions import DetectionVOCEvaluator
 from chainercv.links.model.ssd import GradientScaling
 from chainercv.links.model.ssd import multibox_loss
@@ -118,11 +117,11 @@ def main():
 
     if args.model == 'ssd300':
         model = SSD300(
-            n_fg_class=len(voc_bbox_label_names),
+            n_fg_class=len(roaddamage_label_names),
             pretrained_model='imagenet')
     elif args.model == 'ssd512':
         model = SSD512(
-            n_fg_class=len(voc_bbox_label_names),
+            n_fg_class=len(roaddamage_label_names),
             pretrained_model='imagenet')
 
     model.use_preset('evaluate')
