@@ -159,7 +159,7 @@ def main():
         DetectionVOCEvaluator(
             test_iter, model, use_07_metric=True,
             label_names=roaddamage_label_names),
-        trigger=(100, 'iteration'))
+        trigger=(1000, 'iteration'))
 
     log_interval = 10, 'iteration'
     trainer.extend(extensions.LogReport(trigger=log_interval))
@@ -172,10 +172,10 @@ def main():
 
     trainer.extend(extensions.ProgressBar())
 
-    trainer.extend(extensions.snapshot(), trigger=(100, 'iteration'))
+    trainer.extend(extensions.snapshot(), trigger=(1000, 'iteration'))
     trainer.extend(
         extensions.snapshot_object(model, 'model_iter_{.updater.iteration}'),
-        trigger=(100, 'iteration'))
+        trigger=(1000, 'iteration'))
 
     if args.resume:
         serializers.load_npz(args.resume, trainer)
