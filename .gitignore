@@ -1,0 +1,7 @@
+*.pyc
+
+.ipynb_checkpoints
+
+._RoadDamageDataset
+RoadDamageDataset
+RoadDamageDataset.tar.gz
