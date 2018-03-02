@@ -5,7 +5,6 @@ import xml.etree.ElementTree as ET
 
 import chainer
 
-from chainercv.datasets.voc import voc_utils
 from chainercv.utils import read_image
 
 from utils import roaddamage_label_names
