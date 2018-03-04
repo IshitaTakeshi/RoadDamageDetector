@@ -3,7 +3,6 @@ import copy
 import numpy as np
 
 import chainer
-from chainer.datasets import ConcatenatedDataset
 from chainer.datasets import TransformDataset
 from chainer.optimizer import WeightDecay
 from chainer import serializers
