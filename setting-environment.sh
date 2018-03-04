@@ -3,9 +3,9 @@ wget -c https://bootstrap.pypa.io/get-pip.py
 python3 get-pip.py
 rm get-pip.py
 apt install -y python3-dev
-pip3 install cupy chainer chainercv
+pip3 install -U cupy chainer chainercv
 apt install -y python3-tk libglib2.0-0 libsm-dev
-pip3 install matplotlib opencv-python
+pip3 install -U matplotlib opencv-python
 wget -c https://s3-ap-northeast-1.amazonaws.com/mycityreport/RoadDamageDataset.tar.gz
 tar xvf RoadDamageDataset.tar.gz
 ./merge_dasatet.sh
