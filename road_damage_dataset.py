@@ -1,6 +1,5 @@
 import numpy as np
 import os
-import warnings
 import xml.etree.ElementTree as ET
 
 import chainer
@@ -102,8 +101,8 @@ class RoadDamageDataset(chainer.dataset.DatasetMixin):
                 for tag in ('ymin', 'xmin', 'ymax', 'xmax')])
             name = obj.find('name').text.strip()
             label.append(roaddamage_label_names.index(name))
-        bbox = np.stack(bbox).astype(np.float32)
-        label = np.stack(label).astype(np.int32)
+        bbox = np.array(bbox).astype(np.float32)
+        label = np.array(label).astype(np.int32)
 
         # Load an image
         img_file = os.path.join(self.data_dir, 'JPEGImages', id_ + '.jpg')
