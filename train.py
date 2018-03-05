@@ -1,5 +1,7 @@
 import argparse
 import copy
+import warnings
+
 import numpy as np
 
 import chainer
@@ -64,6 +66,14 @@ class Transform(object):
         # 5. Random horizontal flipping
 
         img, bbox, label = in_data
+
+        if len(bbox) == 0:
+            warnings.warn("No bounding box detected", RuntimeWarning)
+            img -= self.mean
+            _, H, W = img.shape
+            img = resize_with_random_interpolation(img, (self.size, self.size))
+            mb_loc, mb_label = self.coder.encode(bbox, label)
+            return img, mb_loc, mb_label
 
         # 1. Color augmentation
         img = random_distort(img)
