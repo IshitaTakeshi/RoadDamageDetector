@@ -33,14 +33,23 @@ def extract(logs, keys):
     return np.array(L, dtype=np.double)
 
 
-iteration, loss = extract(logs, keys=[
+L = extract(logs, keys=[
     "iteration",
     "main/loss",
+    "main/loss/conf",
+    "main/loss/loc"
 ])
+
+labels = ["confidence loss", "location loss", "overall loss"]
+
+iteration, loss = L[0], L[1:]
+
 ax1 = plt.subplot(211)
 
-plt.ylabel("loss")
-plt.plot(iteration, loss)
+for loss_, label in zip(loss, labels):
+    plt.plot(iteration, loss_, label=label)
+plt.legend(prop={'size': 16})
+
 
 L = extract(logs, keys=[
     "iteration",
