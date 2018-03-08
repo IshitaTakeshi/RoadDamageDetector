@@ -120,7 +120,7 @@ def main():
     parser.add_argument('--out', default='result')
     parser.add_argument('--resume')
 
-    data_dir = "RoadDamageDataset/Adachi"
+    data_dir = "RoadDamageDataset/All"
 
     args = parser.parse_args()
 
@@ -159,16 +159,16 @@ def main():
             param.update_rule.add_hook(WeightDecay(0.0005))
 
     updater = training.StandardUpdater(train_iter, optimizer, device=args.gpu)
-    trainer = training.Trainer(updater, (12000, 'iteration'), args.out)
+    trainer = training.Trainer(updater, (120000, 'iteration'), args.out)
     trainer.extend(
-        extensions.ExponentialShift('lr', 0.1, init=1e-3),
-        trigger=triggers.ManualScheduleTrigger([8000, 10000], 'iteration'))
+        extensions.ExponentialShift('lr', 0.1, init=5e-4),
+        trigger=triggers.ManualScheduleTrigger([80000, 100000], 'iteration'))
 
     trainer.extend(
         DetectionVOCEvaluator(
             test_iter, model, use_07_metric=True,
             label_names=roaddamage_label_names),
-        trigger=(1000, 'iteration'))
+        trigger=(4000, 'iteration'))
 
     log_interval = 10, 'iteration'
     trainer.extend(extensions.LogReport(trigger=log_interval))
@@ -179,12 +179,12 @@ def main():
          'validation/main/map']),
         trigger=log_interval)
 
-    trainer.extend(extensions.ProgressBar())
+    # trainer.extend(extensions.ProgressBar())
 
-    trainer.extend(extensions.snapshot(), trigger=(1000, 'iteration'))
+    trainer.extend(extensions.snapshot(), trigger=(4000, 'iteration'))
     trainer.extend(
         extensions.snapshot_object(model, 'model_iter_{.updater.iteration}'),
-        trigger=(1000, 'iteration'))
+        trigger=(4000, 'iteration'))
 
     if args.resume:
         serializers.load_npz(args.resume, trainer)
