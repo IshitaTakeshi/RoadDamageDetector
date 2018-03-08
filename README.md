@@ -10,9 +10,7 @@
 | GPU Driver   | nvidia-390                      |
 | CUDA Version | 8.0                             |
 
-## 環境設定方法
-
-### ダウンロードと設定
+## 環境設定
 
 ```
 git clone https://github.com/PasonaTech-Inc/anomaly_detection.git
@@ -21,13 +19,14 @@ cd anomaly_detection
 git checkout ssd300-vgg16-all-v0.1
 ```
 
-### 学習
+## 学習
 
 ```
 python3 train.py --gpu <gpu id>
 ```
 
-### 実行
+## 実行
+
 学習済みモデルを用いる場合はモデルファイルをダウンロードしておく．[link](https://drive.google.com/drive/folders/1T_LwA8sjK_yoE7Z7Hv22Dz20G-GNxn1Z?usp=sharing)
 
 ```
