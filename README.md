@@ -39,6 +39,8 @@ python3 demo.py --gpu <gpu id> --pretrained_model models/all/ssd300-vgg16-v0.1/m
 
 学習・実行用のコードはChainerCVの[SSD](https://github.com/chainer/chainercv/tree/master/examples/ssd)に基づいている．
 
+| label        | configuration           |
+|:-------------|:------------------------|
 | architecture | SSD300 (based on VGG16) |
 | iteration    | 120000                  |
 | optimizer    | MomentumSGD             |
@@ -46,11 +48,11 @@ python3 demo.py --gpu <gpu id> --pretrained_model models/all/ssd300-vgg16-v0.1/m
 
 ### データ
 データの詳細は[wiki](https://github.com/PasonaTech-Inc/anomaly_detection/wiki/Road-Damage-Dataset)に書かれている．  
-RoadDamageDatasetの全ての地区のデータをマージし，学習と評価に用いている．  
+RoadDamageDatasetの全ての地区のデータをマージし，学習と評価に用いている．  
 学習には全地区のtrainをマージしたものを，評価には全地区のvalデータをマージしたものを用いている．
 
 ### learning rate
-初期値は5e-04としている．ExponentialShiftにより80000 iterationと100000 iterationにおいて学習レートが変化する．
+初期値は 5e-04 としている．ExponentialShiftにより 80000 iteration と 100000 iteration において学習レートが変化する．
 
 | iteration | learning rate |
 |:----------|--------------:|
@@ -60,9 +62,9 @@ RoadDamageDatasetの全ての地区のデータをマージし，学習と評価
 
 ### 評価
 学習時に 4000 iteration ごとに評価を行っている．  
-評価基準はPascal VOCに準じており，各クラスにおけるAverage Precisionと全クラスに対する平均(mean Average Precision)を計測している．
+評価基準は Pascal VOC に準じており，各クラスにおける Average Precision と全クラスに対する mean Average Precision を計測している．
 
 ## 学習結果
-図上部がiterationに対するlossの経過，図下部が各クラスに対するAverage Precisionと，全クラスに対するmean Average Precisionである．
+図上部が iteration に対する loss の経過，図下部が各クラスに対する Average Precision と，全クラスに対する mean Average Precision である．
 
 ![](images/all/ssd300-vgg16-v0.1.png)
