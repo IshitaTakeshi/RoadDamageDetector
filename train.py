@@ -15,13 +15,13 @@ from chainer.training import triggers
 from chainercv.extensions import DetectionVOCEvaluator
 from chainercv.links.model.ssd import GradientScaling
 from chainercv.links.model.ssd import multibox_loss
-from chainercv.links import SSD300
-from chainercv.links import SSD512
 from chainercv import transforms
 
 from chainercv.links.model.ssd import random_crop_with_bbox_constraints
 from chainercv.links.model.ssd import random_distort
 from chainercv.links.model.ssd import resize_with_random_interpolation
+
+from ssd_resnet101 import SSD300
 from road_damage_dataset import RoadDamageDataset, roaddamage_label_names
 
 
@@ -113,8 +113,6 @@ class Transform(object):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        '--model', choices=('ssd300', 'ssd512'), default='ssd300')
     parser.add_argument('--batchsize', type=int, default=32)
     parser.add_argument('--gpu', type=int, default=-1)
     parser.add_argument('--out', default='result')
@@ -124,14 +122,7 @@ def main():
 
     args = parser.parse_args()
 
-    if args.model == 'ssd300':
-        model = SSD300(
-            n_fg_class=len(roaddamage_label_names),
-            pretrained_model='imagenet')
-    elif args.model == 'ssd512':
-        model = SSD512(
-            n_fg_class=len(roaddamage_label_names),
-            pretrained_model='imagenet')
+    model = SSD300(n_fg_class=len(roaddamage_label_names))
 
     model.use_preset('evaluate')
     train_chain = MultiboxTrainChain(model)
