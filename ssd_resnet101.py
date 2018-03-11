@@ -16,8 +16,8 @@ class ResNet101Extractor(ResNet101Layers):
         return [activations[layer] for layer in layers]
 
 
-class SSD300(SSD):
-    """Single Shot Multibox Detector with 300x300 inputs.
+class SSD224(SSD):
+    """Single Shot Multibox Detector with 224x224 inputs.
 
     This is a model of Single Shot Multibox Detector [#]_.
     This model uses :class:`ResNet101Extractor` as its feature extractor.
@@ -37,7 +37,7 @@ class SSD300(SSD):
 
     def __init__(self, n_fg_class=None, pretrained_model=None):
 
-        super(SSD300, self).__init__(
+        super(SSD224, self).__init__(
             extractor=ResNet101Extractor(),
             multibox=Multibox(
                 n_class=n_fg_class + 1,

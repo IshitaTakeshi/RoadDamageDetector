@@ -21,7 +21,7 @@ from chainercv.links.model.ssd import random_crop_with_bbox_constraints
 from chainercv.links.model.ssd import random_distort
 from chainercv.links.model.ssd import resize_with_random_interpolation
 
-from ssd_resnet101 import SSD300
+from ssd_resnet101 import SSD224
 from road_damage_dataset import RoadDamageDataset, roaddamage_label_names
 
 
@@ -122,7 +122,7 @@ def main():
 
     args = parser.parse_args()
 
-    model = SSD300(n_fg_class=len(roaddamage_label_names))
+    model = SSD224(n_fg_class=len(roaddamage_label_names))
 
     model.use_preset('evaluate')
     train_chain = MultiboxTrainChain(model)
