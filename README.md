@@ -48,7 +48,7 @@ python3 demo.py --gpu <gpu id> --pretrained_model models/all/ssd300-vgg16-v0.1/m
 
 ### データ
 データの詳細は[wiki](https://github.com/PasonaTech-Inc/anomaly_detection/wiki/Road-Damage-Dataset)に書かれている．  
-RoadDamageDatasetの全ての地区のデータをマージし，学習と評価に用いている．  
+RoadDamageDatasetの全ての地区のデータをマージし，学習と評価に用いている．  
 学習には全地区のtrainをマージしたものを，評価には全地区のvalデータをマージしたものを用いている．
 
 ### learning rate
