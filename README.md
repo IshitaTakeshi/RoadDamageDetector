@@ -27,7 +27,7 @@ python3 train.py --gpu <gpu id>
 
 ## 実行
 
-学習済みモデルを用いる場合はモデルファイルをダウンロードしておく．[link](https://drive.google.com/drive/folders/1T_LwA8sjK_yoE7Z7Hv22Dz20G-GNxn1Z?usp=sharing)
+学習済みモデルを用いる場合はモデルファイル([link](https://drive.google.com/drive/folders/1yR-kJqier3tIOuawdS9b9OlJGEaIGF4y?usp=sharing))をダウンロードしておく．
 
 ```
 python3 demo.py --gpu <gpu id> --pretrained_model models/all/ssd300-vgg16-v0.1/model.npz <path to image>
