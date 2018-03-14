@@ -3,11 +3,9 @@ import os
 import xml.etree.ElementTree as ET
 
 import chainer
-
 from chainercv.utils import read_image
 
 from utils import roaddamage_label_names
-
 
 
 class RoadDamageDataset(chainer.dataset.DatasetMixin):
@@ -108,3 +106,62 @@ class RoadDamageDataset(chainer.dataset.DatasetMixin):
         img_file = os.path.join(self.data_dir, 'JPEGImages', id_ + '.jpg')
         img = read_image(img_file, color=True)
         return img, bbox, label
+
+
+class RoadDamageClassificationDataset(RoadDamageDataset):
+
+    def __init__(self, data_dir, background_probability=None):
+        """
+        Generates images for road damage classification.
+        This dataset returns :obj:`image, label`, a tuple of an image and its
+        label. The image is basically of a damage part, but in a certain
+        probability which can be specified by `background_probability`,
+        a random background image is returned.
+
+        Args:
+            background_probability (float64): Probability to generate
+            a background image.
+            The default value is 1 / (number of damage categories + 1).
+        """
+        super(RoadDamageClassificationDataset, self).__init__(
+            data_dir, split='trainval')
+
+        self.background_probability = background_probability
+        if background_probability is None:
+            self.background_probability = 1 / (len(roaddamage_label_names) + 1)
+
+    def get_example(self, i):
+        image, bboxes, labels =\
+            super(RoadDamageClassificationDataset, self).get_example(i)
+
+        def generate_damage():
+            index = np.random.randint(len(labels))
+
+            label = labels[index]
+            ymin, xmin, ymax, xmax = bboxes[index]
+            damage = image[:, ymin:ymax, xmin:xmax]
+
+            background = np.zeros(image.shape)
+            background[:, ymin:ymax, xmin:xmax] = damage
+
+            image = prepare(background)
+            return image, label
+
+        def generate_background():
+            _, H, W = image.shape
+            bbox = generate_background_bbox((H, W), (224, 224), bboxes)
+            ymin, xmin, ymax, xmax = bbox
+            image = prepare(image[:, ymin:ymax, xmin:xmax])
+            label = len(roaddamage_label_names) + 1
+            return image, label
+
+        if np.random.rand() < self.background_probability:
+            # generate_background
+            try:
+                return generate_background()
+            except RuntimeError:
+                # return damage if failed to generate background
+                return generate_damage()
+
+        return generate_damage()
+
