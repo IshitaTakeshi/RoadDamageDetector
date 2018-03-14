@@ -1,6 +1,22 @@
+import chainer
 from chainer.links import ResNet101Layers
+from chainer import functions as F
 from chainercv.links.model.ssd.ssd_vgg16 import (_load_npz, _imagenet_mean)
 from chainercv.links.model.ssd import Multibox, SSD
+
+
+class ResNet101FineTuning(chainer.Chain):
+    def __init__(self, n_fg_class, pretrained_model=None):
+        super(ResNet101Extractor, self).__init__()
+        with self.init_scope():
+            # automatically load the caffemodel
+            self.base = ResNet101Layers(pretrained_model='auto')
+            self.fc6 = Linear(2048, n_fg_class + 1)
+
+    def __call__(self, x):
+        activations = self.base(x, layers=["pool5"])
+        h = activations["pool5"]
+        return F.softmax(self.fc6(h))
 
 
 class ResNet101Extractor(ResNet101Layers):
