@@ -111,7 +111,7 @@ class RoadDamageDataset(chainer.dataset.DatasetMixin):
 
 class RoadDamageClassificationDataset(RoadDamageDataset):
 
-    def __init__(self, data_dir, background_probability=None):
+    def __init__(self, data_dir, split, background_probability=None):
         """
         Generates images for road damage classification.
         This dataset returns :obj:`image, label`, a tuple of an image and its
