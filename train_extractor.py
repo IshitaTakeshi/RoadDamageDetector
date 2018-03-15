@@ -86,6 +86,6 @@ if __name__ == "__main__":
 
     model.to_cpu()
     serializers.save_npz(
-        "model-resnet-extractor.npz",
+        "model-extractor.npz",
         resnet_fine_tuning.base)
 

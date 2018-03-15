@@ -189,7 +189,7 @@ def main():
     trainer.run()
 
     model.to_cpu()
-    serializers.save_npz("model.npz", model)
+    serializers.save_npz("model-detector.npz", model)
 
 
 if __name__ == '__main__':
