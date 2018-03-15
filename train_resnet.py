@@ -60,7 +60,7 @@ if __name__ == "__main__":
     updater = training.StandardUpdater(train_iter, optimizer, device=args.gpu)
     trainer = training.Trainer(updater, (args.epoch, 'epoch'), args.out)
 
-    val_interval = (10 if args.test else 100000), 'iteration'
+    val_interval = (10 if args.test else 1000), 'iteration'
     log_interval = (10 if args.test else 1000), 'iteration'
 
     trainer.extend(extensions.Evaluator(val_iter, model, device=args.gpu),
