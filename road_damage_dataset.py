@@ -5,7 +5,8 @@ import xml.etree.ElementTree as ET
 import chainer
 from chainercv.utils import read_image
 
-from utils import roaddamage_label_names
+from chainer.links.model.vision import resnet
+from utils import roaddamage_label_names, generate_background_bbox
 
 
 class RoadDamageDataset(chainer.dataset.DatasetMixin):
@@ -99,7 +100,7 @@ class RoadDamageDataset(chainer.dataset.DatasetMixin):
                 for tag in ('ymin', 'xmin', 'ymax', 'xmax')])
             name = obj.find('name').text.strip()
             label.append(roaddamage_label_names.index(name))
-        bbox = np.array(bbox).astype(np.float32)
+        bbox = np.array(bbox).astype(np.int32)
         label = np.array(label).astype(np.int32)
 
         # Load an image
