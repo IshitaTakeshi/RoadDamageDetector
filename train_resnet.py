@@ -1,6 +1,7 @@
 import argparse
 
 import chainer
+from chainer import serializers
 from chainer import training
 from chainer.training import extensions
 from chainer import links as L
@@ -29,9 +30,11 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    model = L.Classifier(
-        ResNet101FineTuning(n_class=len(roaddamage_label_names) + 1)
+    resnet_fine_tuning = ResNet101FineTuning(
+        n_class=len(roaddamage_label_names) + 1
     )
+
+    model = L.Classifier(resnet_fine_tuning)
 
     if args.gpu >= 0:
         chainer.cuda.get_device_from_id(args.gpu).use()  # Make the GPU current
@@ -81,6 +84,8 @@ if __name__ == "__main__":
 
     trainer.run()
 
+    model.to_cpu()
+    serializers.save_npz(
+        "model-resnet-extractor.npz",
+        resnet_fine_tuning.base)
 
-if __name__ == '__main__':
-    main()
