@@ -67,6 +67,8 @@ class Transform(object):
 
         img, bbox, label = in_data
 
+        bbox = np.array(bbox).astype(np.float32)
+
         if len(bbox) == 0:
             warnings.warn("No bounding box detected", RuntimeWarning)
             img -= self.mean
