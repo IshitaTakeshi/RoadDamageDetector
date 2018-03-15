@@ -125,44 +125,44 @@ class RoadDamageClassificationDataset(RoadDamageDataset):
             The default value is 1 / (number of damage categories + 1).
         """
         super(RoadDamageClassificationDataset, self).__init__(
-            data_dir, split='trainval')
+            data_dir, split)
 
         self.background_probability = background_probability
         if background_probability is None:
             self.background_probability = 1 / (len(roaddamage_label_names) + 1)
 
+    def _generate_damage(self, image, bboxes, labels):
+        index = np.random.randint(len(labels))
+
+        label = labels[index]
+        ymin, xmin, ymax, xmax = bboxes[index]
+        damage = image[:, ymin:ymax, xmin:xmax]
+
+        background = np.zeros(image.shape)
+        background[:, ymin:ymax, xmin:xmax] = damage
+
+        image = resnet.prepare(background)
+        return image, label
+
+    def _generate_background(self, image, bboxes):
+        _, H, W = image.shape
+        bbox = generate_background_bbox((H, W), (224, 224), bboxes)
+        ymin, xmin, ymax, xmax = bbox
+        image = resnet.prepare(image[:, ymin:ymax, xmin:xmax])
+        label = len(roaddamage_label_names) + 1
+        return image, label
+
     def get_example(self, i):
+
         image, bboxes, labels =\
             super(RoadDamageClassificationDataset, self).get_example(i)
 
-        def generate_damage():
-            index = np.random.randint(len(labels))
-
-            label = labels[index]
-            ymin, xmin, ymax, xmax = bboxes[index]
-            damage = image[:, ymin:ymax, xmin:xmax]
-
-            background = np.zeros(image.shape)
-            background[:, ymin:ymax, xmin:xmax] = damage
-
-            image = prepare(background)
-            return image, label
-
-        def generate_background():
-            _, H, W = image.shape
-            bbox = generate_background_bbox((H, W), (224, 224), bboxes)
-            ymin, xmin, ymax, xmax = bbox
-            image = prepare(image[:, ymin:ymax, xmin:xmax])
-            label = len(roaddamage_label_names) + 1
-            return image, label
-
-        if np.random.rand() < self.background_probability:
+        if len(labels) == 0 or np.random.rand() < self.background_probability:
             # generate_background
             try:
-                return generate_background()
+                return self._generate_background(image, bboxes)
             except RuntimeError:
                 # return damage if failed to generate background
-                return generate_damage()
+                return self._generate_damage(image, bboxes, labels)
 
-        return generate_damage()
-
+        return self._generate_damage(image, bboxes, labels)
