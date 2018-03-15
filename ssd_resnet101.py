@@ -1,17 +1,17 @@
 import chainer
-from chainer.links import ResNet101Layers
+from chainer.links import Linear, ResNet101Layers
 from chainer import functions as F
 from chainercv.links.model.ssd.ssd_vgg16 import (_load_npz, _imagenet_mean)
 from chainercv.links.model.ssd import Multibox, SSD
 
 
 class ResNet101FineTuning(chainer.Chain):
-    def __init__(self, n_fg_class, pretrained_model=None):
-        super(ResNet101Extractor, self).__init__()
+    def __init__(self, n_class, pretrained_model='auto'):
+        super(ResNet101FineTuning, self).__init__()
+
         with self.init_scope():
-            # automatically load the caffemodel
-            self.base = ResNet101Layers(pretrained_model='auto')
-            self.fc6 = Linear(2048, n_fg_class + 1)
+            self.base = ResNet101Layers(pretrained_model)
+            self.fc6 = Linear(2048, n_class)
 
     def __call__(self, x):
         activations = self.base(x, layers=["pool5"])
