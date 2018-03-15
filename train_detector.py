@@ -119,6 +119,9 @@ def main():
                         help='Learning minibatch size')
     parser.add_argument('--gpu', type=int, default=-1,
                         help='GPU ID (negative value indicates CPU')
+    parser.add_argument('--pretrained_extractor',
+                        default='model-resnet-extractor.npz',
+                        help='Model to extract feature maps')
     parser.add_argument('--out', default='result-detection')
     parser.add_argument('--resume', default='',
                         help='Initialize the trainer from given file')
@@ -127,7 +130,9 @@ def main():
 
     args = parser.parse_args()
 
-    model = SSD224(n_fg_class=len(roaddamage_label_names))
+    model = SSD224(
+       n_fg_class=len(roaddamage_label_names),
+       pretrained_extractor=args.pretrained_extractor)
 
     model.use_preset('evaluate')
     train_chain = MultiboxTrainChain(model)
