@@ -4,8 +4,7 @@ import matplotlib.pyplot as plot
 import chainer
 from chainer.serializers import load_npz
 
-from chainercv.links import SSD300
-from chainercv.links import SSD512
+from ssd_resnet101 import SSD224
 from chainercv import utils
 from chainercv.visualizations import vis_bbox
 
@@ -14,21 +13,14 @@ from utils import roaddamage_label_names
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        '--model', choices=('ssd300', 'ssd512'), default='ssd300')
     parser.add_argument('--gpu', type=int, default=-1)
     parser.add_argument('--pretrained_model', required=True)
     parser.add_argument('image')
     args = parser.parse_args()
 
-    if args.model == 'ssd300':
-        model = SSD300(
-            n_fg_class=len(roaddamage_label_names),
-            pretrained_model=args.pretrained_model)
-    elif args.model == 'ssd512':
-        model = SSD512(
-            n_fg_class=len(roaddamage_label_names),
-            pretrained_model=args.pretrained_model)
+    model = SSD224(
+        n_fg_class=len(roaddamage_label_names),
+        pretrained_model=args.pretrained_model)
 
     if args.gpu >= 0:
         chainer.cuda.get_device_from_id(args.gpu).use()
