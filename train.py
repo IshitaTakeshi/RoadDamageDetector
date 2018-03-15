@@ -115,10 +115,13 @@ class Transform(object):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--batchsize', type=int, default=32)
-    parser.add_argument('--gpu', type=int, default=-1)
-    parser.add_argument('--out', default='result')
-    parser.add_argument('--resume')
+    parser.add_argument('--batchsize', type=int, default=32,
+                        help='Learning minibatch size')
+    parser.add_argument('--gpu', type=int, default=-1,
+                        help='GPU ID (negative value indicates CPU')
+    parser.add_argument('--out', default='result-detection')
+    parser.add_argument('--resume', default='',
+                        help='Initialize the trainer from given file')
 
     data_dir = "RoadDamageDataset/All"
 
