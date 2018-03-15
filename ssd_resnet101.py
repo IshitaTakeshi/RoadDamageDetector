@@ -49,12 +49,17 @@ class SSD224(SSD):
             * `filepath`: A path of npz file. In this case, :obj:`n_fg_class` \
                 must be specified properly.
             * :obj:`None`: Do not load weights.
+       pretrained_extractor (str): The `npz` weight file of `ResNet101Layers`.
+           If this argument is specified as `auto`, it automatically loads and
+           converts the caffemodel.
     """
 
-    def __init__(self, n_fg_class=None, pretrained_model=None):
+    def __init__(self, n_fg_class=None,
+                 pretrained_extractor='auto',
+                 pretrained_model=None):
 
         super(SSD224, self).__init__(
-            extractor=ResNet101Extractor(),
+            extractor=ResNet101Extractor(pretrained_extractor),
             multibox=Multibox(
                 n_class=n_fg_class + 1,
                 aspect_ratios=((2,), (2, 3), (2, 3), (2,))),
