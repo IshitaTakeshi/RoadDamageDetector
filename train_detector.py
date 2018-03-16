@@ -120,7 +120,7 @@ def main():
     parser.add_argument('--gpu', type=int, default=-1,
                         help='GPU ID (negative value indicates CPU')
     parser.add_argument('--pretrained_extractor',
-                        default='model-resnet-extractor.npz',
+                        default='auto',
                         help='Model to extract feature maps')
     parser.add_argument('--out', default='result-detection')
     parser.add_argument('--resume', default='',
