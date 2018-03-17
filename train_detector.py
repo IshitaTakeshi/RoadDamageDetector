@@ -11,6 +11,7 @@ from chainer import serializers
 from chainer import training
 from chainer.training import extensions
 from chainer.training import triggers
+from chainer.links.model.vision import resnet
 
 from chainercv.extensions import DetectionVOCEvaluator
 from chainercv.links.model.ssd import GradientScaling
@@ -71,9 +72,11 @@ class Transform(object):
 
         if len(bbox) == 0:
             warnings.warn("No bounding box detected", RuntimeWarning)
+
             img -= self.mean
             _, H, W = img.shape
             img = resize_with_random_interpolation(img, (self.size, self.size))
+            img = resnet.prepare(img, (self.size, self.size))
             mb_loc, mb_label = self.coder.encode(bbox, label)
             return img, mb_loc, mb_label
 
@@ -107,9 +110,8 @@ class Transform(object):
             bbox, (self.size, self.size), x_flip=params['x_flip'])
 
         # Preparation for SSD network
-        img -= self.mean
+        img = resnet.prepare(img, (self.size, self.size))
         mb_loc, mb_label = self.coder.encode(bbox, label)
-
         return img, mb_loc, mb_label
 
 
