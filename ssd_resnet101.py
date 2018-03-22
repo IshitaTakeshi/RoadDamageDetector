@@ -62,9 +62,9 @@ class SSD224(SSD):
             extractor=ResNet101Extractor(pretrained_extractor),
             multibox=Multibox(
                 n_class=n_fg_class + 1,
-                aspect_ratios=((2,), (2, 3), (2, 3), (2,))),
-                steps=(24, 48, 100, 200),
-                sizes=(30, 60, 111, 162, 213),
+                aspect_ratios=((2, 3), (2, 3), (2, 3), (2, 3))),
+                steps=(4, 8, 16, 32),
+                sizes=(15, 30, 60, 120, 244),
                 mean=_imagenet_mean)
 
         if pretrained_model:
