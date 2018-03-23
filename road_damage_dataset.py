@@ -4,6 +4,8 @@ import xml.etree.ElementTree as ET
 
 import chainer
 from chainercv.utils import read_image
+from chainercv.transforms import random_flip
+from chainercv.links.model.ssd import random_distort
 
 from chainer.links.model.vision import resnet
 from utils import roaddamage_label_names, generate_background_bbox
@@ -152,6 +154,11 @@ class RoadDamageClassificationDataset(RoadDamageDataset):
         label = len(roaddamage_label_names) + 1
         return image, label
 
+    def _data_augumentation(self, image):
+        image = random_distort(image)
+        image = random_flip(image, x_random=True)
+        return image
+
     def get_example(self, i):
 
         image, bboxes, labels =\
@@ -160,9 +167,15 @@ class RoadDamageClassificationDataset(RoadDamageDataset):
         if len(labels) == 0 or np.random.rand() < self.background_probability:
             # generate_background
             try:
-                return self._generate_background(image, bboxes)
+                image, label = self._generate_background(image, bboxes)
+                image = self._data_augumentation(image)
+                return image, label
             except RuntimeError:
                 # return damage if failed to generate background
-                return self._generate_damage(image, bboxes, labels)
+                image, label = self._generate_damage(image, bboxes, labels)
+                image = self._data_augumentation(image)
+                return image, label
 
-        return self._generate_damage(image, bboxes, labels)
+        image, label = self._generate_damage(image, bboxes, labels)
+        image = self._data_augumentation(image)
+        return image, label
