@@ -74,7 +74,6 @@ class Transform(object):
             warnings.warn("No bounding box detected", RuntimeWarning)
 
             img -= self.mean
-            _, H, W = img.shape
             img = resize_with_random_interpolation(img, (self.size, self.size))
             img = resnet.prepare(img, (self.size, self.size))
             mb_loc, mb_label = self.coder.encode(bbox, label)
