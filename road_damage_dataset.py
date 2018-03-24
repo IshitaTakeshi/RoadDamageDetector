@@ -96,12 +96,19 @@ class RoadDamageDataset(chainer.dataset.DatasetMixin):
         for obj in anno.findall('object'):
             bndbox_anno = obj.find('bndbox')
 
+            # Ignore if the label is not listed
+            name = obj.find('name').text.strip()
+
+            if name not in roaddamage_label_names:
+                continue
+
+            label.append(roaddamage_label_names.index(name))
+
             # subtract 1 to make pixel indexes 0-based
             bbox.append([
                 int(bndbox_anno.find(tag).text) - 1
                 for tag in ('ymin', 'xmin', 'ymax', 'xmax')])
-            name = obj.find('name').text.strip()
-            label.append(roaddamage_label_names.index(name))
+
         bbox = np.array(bbox).astype(np.int32)
         label = np.array(label).astype(np.int32)
 
