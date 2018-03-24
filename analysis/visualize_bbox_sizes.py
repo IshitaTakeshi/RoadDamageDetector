@@ -1,26 +1,28 @@
+import os
+
 import random
 
 import numpy as np
+
 from matplotlib import pyplot as plt
 from matplotlib import rcParams
+from matplotlib.lines import Line2D
 
 from road_damage_dataset import RoadDamageDataset
 from utils import roaddamage_label_names
+from dataset_utils import load_labels_and_bboxes
 
 rcParams['figure.figsize'] = 14, 18
 rcParams['figure.dpi'] = 240
 
+dataset_dir = os.path.join("RoadDamageDataset", "All")
+dataset = RoadDamageDataset(dataset_dir, split="trainval")
 
-dataset = RoadDamageDataset("RoadDamageDataset/All", split="trainval")
+indices = np.arange(len(dataset))
+np.random.shuffle(indices)
+N = 600
 
-bboxes = []
-labels = []
-for i in range(400):
-    img, bbox, label = dataset.get_example(i)
-    if len(bbox) == 0:
-        continue
-    labels.append(label)
-    bboxes.append(bbox)
+labels, bboxes = load_labels_and_bboxes(dataset, indices[:N])
 
 bboxes = np.vstack(bboxes)
 labels = np.concatenate(labels)
@@ -43,9 +45,10 @@ axes.set_title("Distribution of bounding box sizes")
 axes.set_xlabel("width")
 axes.set_xlabel("height")
 
-for label in np.unique(labels):
+uniques = np.unique(labels)
+for i, label in enumerate(uniques):
     axes.scatter(W[labels==label], H[labels==label], s=100,
-                 marker=random.choice(['o', 'D', 'd', 'x', '+']),
+                 marker=Line2D.filled_markers[i % len(uniques)],
                  label=roaddamage_label_names[label])
 axes.legend()
 plt.show()
