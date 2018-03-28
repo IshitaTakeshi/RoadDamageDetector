@@ -54,7 +54,8 @@ class SSD224(SSD):
            converts the caffemodel.
     """
 
-    def __init__(self, n_fg_class=None,
+    def __init__(self, params,
+                 n_fg_class=None,
                  pretrained_extractor='auto',
                  pretrained_model=None):
 
@@ -62,10 +63,10 @@ class SSD224(SSD):
             extractor=ResNet101Extractor(pretrained_extractor),
             multibox=Multibox(
                 n_class=n_fg_class + 1,
-                aspect_ratios=((2, 3), (2, 3), (2, 3), (2, 3))),
-                steps=(4, 8, 16, 32),
-                sizes=(15, 30, 60, 120, 244),
-                mean=_imagenet_mean)
+                aspect_ratios=params["aspect_ratios"]),
+            steps=params["steps"],
+            sizes=params["sizes"],
+            mean=_imagenet_mean)
 
         if pretrained_model:
             _load_npz(pretrained_model, self)

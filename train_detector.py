@@ -114,26 +114,14 @@ class Transform(object):
         return img, mb_loc, mb_label
 
 
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--batchsize', type=int, default=32,
-                        help='Learning minibatch size')
-    parser.add_argument('--gpu', type=int, default=-1,
-                        help='GPU ID (negative value indicates CPU')
-    parser.add_argument('--pretrained_extractor',
-                        default='auto',
-                        help='Model to extract feature maps')
-    parser.add_argument('--out', default='result-detection')
-    parser.add_argument('--resume', default='',
-                        help='Initialize the trainer from given file')
-
+def train_with(args, params, id_):
     data_dir = "RoadDamageDataset/All"
 
-    args = parser.parse_args()
-
     model = SSD224(
-       n_fg_class=len(roaddamage_label_names),
-       pretrained_extractor=args.pretrained_extractor)
+        params,
+        n_fg_class=len(roaddamage_label_names),
+        pretrained_extractor=args.pretrained_extractor
+    )
 
     model.use_preset('evaluate')
     train_chain = MultiboxTrainChain(model)
@@ -161,7 +149,8 @@ def main():
             param.update_rule.add_hook(WeightDecay(0.0005))
 
     updater = training.StandardUpdater(train_iter, optimizer, device=args.gpu)
-    trainer = training.Trainer(updater, (120000, 'iteration'), args.out)
+    trainer = training.Trainer(updater, (120000, 'iteration'), args.out + id_)
+
     trainer.extend(
         extensions.ExponentialShift('lr', 0.1, init=3e-4),
         trigger=triggers.ManualScheduleTrigger([80000, 100000], 'iteration'))
@@ -170,7 +159,7 @@ def main():
         DetectionVOCEvaluator(
             test_iter, model, use_07_metric=True,
             label_names=roaddamage_label_names),
-        trigger=(400, 'iteration'))
+        trigger=(200, 'iteration'))
 
     log_interval = 10, 'iteration'
     trainer.extend(extensions.LogReport(trigger=log_interval))
@@ -197,6 +186,34 @@ def main():
     model.to_cpu()
     serializers.save_npz("model-detector.npz", model)
 
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--batchsize', type=int, default=32,
+                        help='Learning minibatch size')
+    parser.add_argument('--gpu', type=int, default=-1,
+                        help='GPU ID (negative value indicates CPU')
+    parser.add_argument('--pretrained_extractor',
+                        default='auto',
+                        help='Model to extract feature maps')
+    parser.add_argument('--out', default='result-detection')
+    parser.add_argument('--resume', default='',
+                        help='Initialize the trainer from given file')
+
+    args = parser.parse_args()
+
+    sizes_candidates = [
+        (5, 15, 60, 120, 244),
+    ]
+    ids = list(map(str, range(len(sizes_candidates))))
+
+    for sizes, id_ in zip(sizes_candidates, ids):
+        params = {
+            "aspect_ratios": ((2, 3, 4), (2, 3, 4), (2, 3, 4), (2, 3, 4)),
+            "steps": (4, 8, 16, 32),
+            "sizes": sizes
+        }
+        train_with(args, params, id_)
 
 if __name__ == '__main__':
     main()
