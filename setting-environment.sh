@@ -1,4 +1,4 @@
-apt update; apt upgrade -y; apt install -y sudo git vim zsh python3 zip
+apt update; apt upgrade -y; apt install -y sudo git vim zsh python3 zip wget
 wget -c https://bootstrap.pypa.io/get-pip.py
 python3 get-pip.py
 rm get-pip.py
