@@ -11,7 +11,7 @@ rcParams['figure.figsize'] = 16, 20
 rcParams['figure.dpi'] = 240
 
 
-linestyles = ['-', '--', ':']
+linestyles = ['-', '--', '-.']
 
 
 logfile_path = sys.argv[1]
