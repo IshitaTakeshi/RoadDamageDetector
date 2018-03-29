@@ -5,7 +5,8 @@ import random
 import numpy as np
 from matplotlib import pyplot as plt
 
-from pylab import rcParams
+from matplotlib import rcParams
+
 
 rcParams['figure.figsize'] = 16, 20
 rcParams['figure.dpi'] = 240

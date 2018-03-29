@@ -1,5 +1,6 @@
 import argparse
-import matplotlib.pyplot as plot
+from matplotlib import pyplot as plt
+from matplotlib import rcParams
 
 import chainer
 from chainer.serializers import load_npz
@@ -9,6 +10,10 @@ from chainercv import utils
 from chainercv.visualizations import vis_bbox
 
 from utils import roaddamage_label_names
+
+
+rcParams['figure.figsize'] = 16, 20
+rcParams['figure.dpi'] = 240
 
 
 def main():
@@ -32,7 +37,8 @@ def main():
 
     vis_bbox(
         img, bbox, label, score, label_names=roaddamage_label_names)
-    plot.show()
+    plt.axis('off')
+    plt.show()
 
 
 if __name__ == '__main__':
