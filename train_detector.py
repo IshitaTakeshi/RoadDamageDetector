@@ -22,7 +22,7 @@ from chainercv.links.model.ssd import random_crop_with_bbox_constraints
 from chainercv.links.model.ssd import random_distort
 from chainercv.links.model.ssd import resize_with_random_interpolation
 
-from ssd_resnet101 import SSD224
+from ssd_resnet50 import SSD224
 from road_damage_dataset import RoadDamageDataset, roaddamage_label_names
 
 
@@ -170,7 +170,7 @@ def main():
         DetectionVOCEvaluator(
             test_iter, model, use_07_metric=True,
             label_names=roaddamage_label_names),
-        trigger=(400, 'iteration'))
+        trigger=(200, 'iteration'))
 
     log_interval = 10, 'iteration'
     trainer.extend(extensions.LogReport(trigger=log_interval))
