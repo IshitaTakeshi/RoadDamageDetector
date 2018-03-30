@@ -65,7 +65,7 @@ L = extract(logs, keys=[
     'validation/main/map'
 ])
 
-labels = ['D00', 'D01', 'D10', 'D11', 'D20', 'D30', 'D40', 'D43', 'D44', 'mAP']
+labels = ['D00', 'D01', 'D10', 'D11', 'D20', 'D40', 'D43', 'D44', 'mAP']
 
 iteration, aps = L[0], L[1:]
 
