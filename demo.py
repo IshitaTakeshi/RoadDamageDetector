@@ -1,5 +1,5 @@
 import argparse
-import matplotlib.pyplot as plot
+from matplotlib import pyplot as plt
 
 import chainer
 from chainer.serializers import load_npz
@@ -40,7 +40,8 @@ def main():
 
     vis_bbox(
         img, bbox, label, score, label_names=roaddamage_label_names)
-    plot.show()
+    plt.axis('off')
+    plt.show()
 
 
 if __name__ == '__main__':
