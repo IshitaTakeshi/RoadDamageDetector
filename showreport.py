@@ -4,15 +4,14 @@ import random
 
 import numpy as np
 from matplotlib import pyplot as plt
-
 from matplotlib import rcParams
-
 
 rcParams['figure.figsize'] = 16, 20
 rcParams['figure.dpi'] = 240
+rcParams['font.size'] = 18
 
 
-linestyles = ['-', '--', '-.']
+linestyles = ['-', '--', ':', '-.']
 
 
 logfile_path = sys.argv[1]
@@ -77,6 +76,6 @@ for ap, label in zip(aps, labels):
     plt.plot(iteration[masks], ap[masks], linestyle=random.choice(linestyles), label=label)
 
 plt.xlabel("iteration")
-plt.legend()
+plt.legend(loc='center left', bbox_to_anchor=(1, 0.815), numpoints=1)
 
 plt.show()
