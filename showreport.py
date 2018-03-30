@@ -4,11 +4,11 @@ import random
 
 import numpy as np
 from matplotlib import pyplot as plt
-
-from pylab import rcParams
+from matplotlib import rcParams
 
 rcParams['figure.figsize'] = 16, 20
 rcParams['figure.dpi'] = 240
+rcParams['font.size'] = 18
 
 
 linestyles = ['-', '--', ':', '-.']
@@ -65,7 +65,7 @@ L = extract(logs, keys=[
     'validation/main/map'
 ])
 
-labels = ['D00', 'D01', 'D10', 'D11', 'D20', 'D30', 'D40', 'D43', 'D44', 'mAP']
+labels = ['D00', 'D01', 'D10', 'D11', 'D20', 'D40', 'D43', 'D44', 'mAP']
 
 iteration, aps = L[0], L[1:]
 
