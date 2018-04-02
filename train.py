@@ -47,6 +47,15 @@ class MultiboxTrainChain(chainer.Chain):
         return loss
 
 
+class Preprocessing(object):
+    def __init__(self, mean):
+        self.mean = mean.astype(np.float32)
+
+    def __call__(self, in_data):
+        img, mb_loc, mb_label = in_data
+        return img - self.mean, mb_loc, mb_label
+
+
 class Transform(object):
 
     def __init__(self, coder, size, mean):
@@ -69,8 +78,6 @@ class Transform(object):
 
         if len(bbox) == 0:
             warnings.warn("No bounding box detected", RuntimeWarning)
-            img -= self.mean
-            _, H, W = img.shape
             img = resize_with_random_interpolation(img, (self.size, self.size))
             mb_loc, mb_label = self.coder.encode(bbox, label)
             return img, mb_loc, mb_label
@@ -104,8 +111,6 @@ class Transform(object):
         bbox = transforms.flip_bbox(
             bbox, (self.size, self.size), x_flip=params['x_flip'])
 
-        # Preparation for SSD network
-        img -= self.mean
         mb_loc, mb_label = self.coder.encode(bbox, label)
 
         return img, mb_loc, mb_label
@@ -143,6 +148,7 @@ def main():
         RoadDamageDataset(data_dir, split='train'),
         Transform(model.coder, model.insize, model.mean)
     )
+    train = TransformDataset(train, Preprocessing(model.mean))
     train_iter = chainer.iterators.SerialIterator(train, args.batchsize)
 
     test = RoadDamageDataset(data_dir, split='val')
