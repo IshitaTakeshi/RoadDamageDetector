@@ -48,6 +48,26 @@ class MultiboxTrainChain(chainer.Chain):
         return loss
 
 
+class MeanSubtraction(object):
+    def __init__(self, mean):
+        self.mean = mean.astype(np.float32)
+
+    def __call__(self, in_data):
+        img = in_data[0]
+        img = img - self.mean
+        return (img, *in_data[1:])
+
+
+class ResNetPreparation(object):
+    def __init__(self, size):
+        self.size = size
+
+    def __call__(self, in_data):
+        img = in_data[0]
+        img = resnet.prepare(img, (self.size, self.size))
+        return (img, *in_data[1:])
+
+
 class Transform(object):
 
     def __init__(self, coder, size, mean):
@@ -72,10 +92,7 @@ class Transform(object):
 
         if len(bbox) == 0:
             warnings.warn("No bounding box detected", RuntimeWarning)
-
-            img -= self.mean
             img = resize_with_random_interpolation(img, (self.size, self.size))
-            img = resnet.prepare(img, (self.size, self.size))
             mb_loc, mb_label = self.coder.encode(bbox, label)
             return img, mb_loc, mb_label
 
