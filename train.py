@@ -70,7 +70,6 @@ class Transform(object):
         if len(bbox) == 0:
             warnings.warn("No bounding box detected", RuntimeWarning)
             img -= self.mean
-            _, H, W = img.shape
             img = resize_with_random_interpolation(img, (self.size, self.size))
             mb_loc, mb_label = self.coder.encode(bbox, label)
             return img, mb_loc, mb_label
