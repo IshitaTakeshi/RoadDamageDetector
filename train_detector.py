@@ -140,12 +140,10 @@ def main():
     parser.add_argument('--gpu', type=int, default=-1,
                         help='GPU ID (negative value indicates CPU')
     parser.add_argument('--base-network', choices=('vgg16', 'resnet101'),
-                        default='vgg16',
-                        help='Base network')
+                        default='vgg16', help='Base network')
     parser.add_argument('--pretrained-model', default=None,
                         help='Pretrained SSD model')
-    parser.add_argument('--pretrained-extractor',
-                        default='auto',
+    parser.add_argument('--pretrained-extractor', default='auto',
                         help='Pretrained CNN model to extract feature maps')
     parser.add_argument('--out', default='result-detection')
     parser.add_argument('--resume', default=None,
