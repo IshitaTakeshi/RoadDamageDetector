@@ -1,3 +1,4 @@
+import os
 import argparse
 import copy
 import warnings
@@ -13,6 +14,7 @@ from chainer.training import extensions
 from chainer.training import triggers
 from chainer.links.model.vision import resnet
 
+import chainercv
 from chainercv.extensions import DetectionVOCEvaluator
 from chainercv.links.model.ssd import GradientScaling
 from chainercv.links.model.ssd import multibox_loss
@@ -22,7 +24,7 @@ from chainercv.links.model.ssd import random_crop_with_bbox_constraints
 from chainercv.links.model.ssd import random_distort
 from chainercv.links.model.ssd import resize_with_random_interpolation
 
-from ssd_resnet101 import SSD224
+import ssd_resnet101
 from road_damage_dataset import RoadDamageDataset, roaddamage_label_names
 
 
@@ -125,32 +127,56 @@ class Transform(object):
         bbox = transforms.flip_bbox(
             bbox, (self.size, self.size), x_flip=params['x_flip'])
 
-        # Preparation for SSD network
-        img = resnet.prepare(img, (self.size, self.size))
         mb_loc, mb_label = self.coder.encode(bbox, label)
         return img, mb_loc, mb_label
 
 
 def main():
     parser = argparse.ArgumentParser()
+    parser.add_argument('--data-dir', type=str,
+                        default=os.path.join("RoadDamageDataset", "All"))
     parser.add_argument('--batchsize', type=int, default=32,
                         help='Learning minibatch size')
     parser.add_argument('--gpu', type=int, default=-1,
                         help='GPU ID (negative value indicates CPU')
+    parser.add_argument('--base-network', choices=('vgg16', 'resnet101'),
+                        default='vgg16',
+                        help='Base network')
+    parser.add_argument('--pretrained_model', default=None,
+                        help='Pretrained SSD model')
     parser.add_argument('--pretrained_extractor',
                         default='auto',
-                        help='Model to extract feature maps')
+                        help='Pretrained CNN model to extract feature maps')
     parser.add_argument('--out', default='result-detection')
-    parser.add_argument('--resume', default='',
+    parser.add_argument('--resume', default=None,
                         help='Initialize the trainer from given file')
-
-    data_dir = "RoadDamageDataset/All"
 
     args = parser.parse_args()
 
-    model = SSD224(
-       n_fg_class=len(roaddamage_label_names),
-       pretrained_extractor=args.pretrained_extractor)
+    print("Data directory       : {}".format(args.data_dir))
+    print("Batchsize            : {}".format(args.batchsize))
+    print("GPU ID               : {}".format(args.gpu))
+    print("Base network         : {}".format(args.base_network))
+    print("Pretrained extractor : {}".format(args.pretrained_extractor))
+    print("Pretrained model     : {}".format(args.pretrained_model))
+    print("Output directory     : {}".format(args.out))
+    print("Resume from          : {}".format(args.resume))
+
+
+    if args.base_network == 'vgg16':
+       # pretrained_extractor is currently not available for this class
+        model = chainercv.links.SSD300(
+           n_fg_class=len(roaddamage_label_names),
+           pretrained_model=args.pretrained_model)
+        preprocessing = MeanSubtraction(model.mean)
+    elif args.base_network == 'resnet101':
+        model = ssd_resnet101.SSD224(
+           n_fg_class=len(roaddamage_label_names),
+           pretrained_extractor=args.pretrained_extractor,
+           pretrained_model=args.pretrained_model)
+        preprocessing = ResNetPreparation(model.insize)
+    else:
+        raise ValueError('Invalid base network')
 
     model.use_preset('evaluate')
     train_chain = MultiboxTrainChain(model)
@@ -159,12 +185,15 @@ def main():
         model.to_gpu()
 
     train = TransformDataset(
-        RoadDamageDataset(data_dir, split='train'),
+        RoadDamageDataset(args.data_dir, split='train'),
         Transform(model.coder, model.insize, model.mean)
     )
+
+    train = TransformDataset(train, preprocessing)
+
     train_iter = chainer.iterators.SerialIterator(train, args.batchsize)
 
-    test = RoadDamageDataset(data_dir, split='val')
+    test = RoadDamageDataset(args.data_dir, split='val')
     test_iter = chainer.iterators.SerialIterator(
         test, args.batchsize, repeat=False, shuffle=False)
 
