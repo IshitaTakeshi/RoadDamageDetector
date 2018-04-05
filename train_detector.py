@@ -142,9 +142,9 @@ def main():
     parser.add_argument('--base-network', choices=('vgg16', 'resnet101'),
                         default='vgg16',
                         help='Base network')
-    parser.add_argument('--pretrained_model', default=None,
+    parser.add_argument('--pretrained-model', default=None,
                         help='Pretrained SSD model')
-    parser.add_argument('--pretrained_extractor',
+    parser.add_argument('--pretrained-extractor',
                         default='auto',
                         help='Pretrained CNN model to extract feature maps')
     parser.add_argument('--out', default='result-detection')

@@ -14,7 +14,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--batchsize', type=int, default=32,
                         help='Learning minibatch size')
-    parser.add_argument('--val_batchsize', '-b', type=int, default=250,
+    parser.add_argument('--val-batchsize', '-b', type=int, default=250,
                         help='Validation minibatch size')
     parser.add_argument('--epoch', type=int, default=10,
                         help='Number of epochs to train')
