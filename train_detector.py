@@ -216,7 +216,7 @@ def main():
         DetectionVOCEvaluator(
             test_iter, model, use_07_metric=True,
             label_names=roaddamage_label_names),
-        trigger=(400, 'iteration'))
+        trigger=(4000, 'iteration'))
 
     log_interval = 10, 'iteration'
     trainer.extend(extensions.LogReport(trigger=log_interval))
