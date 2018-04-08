@@ -1,3 +1,4 @@
+import os
 import argparse
 import copy
 import warnings
@@ -11,17 +12,19 @@ from chainer import serializers
 from chainer import training
 from chainer.training import extensions
 from chainer.training import triggers
+from chainer.links.model.vision import resnet
 
+import chainercv
 from chainercv.extensions import DetectionVOCEvaluator
 from chainercv.links.model.ssd import GradientScaling
 from chainercv.links.model.ssd import multibox_loss
-from chainercv.links import SSD300
-from chainercv.links import SSD512
 from chainercv import transforms
 
 from chainercv.links.model.ssd import random_crop_with_bbox_constraints
 from chainercv.links.model.ssd import random_distort
 from chainercv.links.model.ssd import resize_with_random_interpolation
+
+import ssd_resnet101
 from road_damage_dataset import RoadDamageDataset, roaddamage_label_names
 
 
@@ -47,6 +50,26 @@ class MultiboxTrainChain(chainer.Chain):
         return loss
 
 
+class MeanSubtraction(object):
+    def __init__(self, mean):
+        self.mean = mean.astype(np.float32)
+
+    def __call__(self, in_data):
+        img = in_data[0]
+        img = img - self.mean
+        return (img, *in_data[1:])
+
+
+class ResNetPreparation(object):
+    def __init__(self, size):
+        self.size = size
+
+    def __call__(self, in_data):
+        img = in_data[0]
+        img = resnet.prepare(img, (self.size, self.size))
+        return (img, *in_data[1:])
+
+
 class Transform(object):
 
     def __init__(self, coder, size, mean):
@@ -67,10 +90,10 @@ class Transform(object):
 
         img, bbox, label = in_data
 
+        bbox = np.array(bbox).astype(np.float32)
+
         if len(bbox) == 0:
             warnings.warn("No bounding box detected", RuntimeWarning)
-            img -= self.mean
-            _, H, W = img.shape
             img = resize_with_random_interpolation(img, (self.size, self.size))
             mb_loc, mb_label = self.coder.encode(bbox, label)
             return img, mb_loc, mb_label
@@ -104,34 +127,54 @@ class Transform(object):
         bbox = transforms.flip_bbox(
             bbox, (self.size, self.size), x_flip=params['x_flip'])
 
-        # Preparation for SSD network
-        img -= self.mean
         mb_loc, mb_label = self.coder.encode(bbox, label)
-
         return img, mb_loc, mb_label
 
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        '--model', choices=('ssd300', 'ssd512'), default='ssd300')
-    parser.add_argument('--batchsize', type=int, default=32)
-    parser.add_argument('--gpu', type=int, default=-1)
-    parser.add_argument('--out', default='result')
-    parser.add_argument('--resume')
-
-    data_dir = "RoadDamageDataset/All"
+    parser.add_argument('--data-dir', type=str,
+                        default=os.path.join("RoadDamageDataset", "All"))
+    parser.add_argument('--batchsize', type=int, default=32,
+                        help='Learning minibatch size')
+    parser.add_argument('--gpu', type=int, default=-1,
+                        help='GPU ID (negative value indicates CPU')
+    parser.add_argument('--base-network', choices=('vgg16', 'resnet101'),
+                        default='vgg16', help='Base network')
+    parser.add_argument('--pretrained-model', default=None,
+                        help='Pretrained SSD model')
+    parser.add_argument('--pretrained-extractor', default='auto',
+                        help='Pretrained CNN model to extract feature maps')
+    parser.add_argument('--out', default='result-detection')
+    parser.add_argument('--resume', default=None,
+                        help='Initialize the trainer from given file')
 
     args = parser.parse_args()
 
-    if args.model == 'ssd300':
-        model = SSD300(
-            n_fg_class=len(roaddamage_label_names),
-            pretrained_model='imagenet')
-    elif args.model == 'ssd512':
-        model = SSD512(
-            n_fg_class=len(roaddamage_label_names),
-            pretrained_model='imagenet')
+    print("Data directory       : {}".format(args.data_dir))
+    print("Batchsize            : {}".format(args.batchsize))
+    print("GPU ID               : {}".format(args.gpu))
+    print("Base network         : {}".format(args.base_network))
+    print("Pretrained extractor : {}".format(args.pretrained_extractor))
+    print("Pretrained model     : {}".format(args.pretrained_model))
+    print("Output directory     : {}".format(args.out))
+    print("Resume from          : {}".format(args.resume))
+
+
+    if args.base_network == 'vgg16':
+       # pretrained_extractor is currently not available for this class
+        model = chainercv.links.SSD300(
+           n_fg_class=len(roaddamage_label_names),
+           pretrained_model=args.pretrained_model)
+        preprocessing = MeanSubtraction(model.mean)
+    elif args.base_network == 'resnet101':
+        model = ssd_resnet101.SSD224(
+           n_fg_class=len(roaddamage_label_names),
+           pretrained_extractor=args.pretrained_extractor,
+           pretrained_model=args.pretrained_model)
+        preprocessing = ResNetPreparation(model.insize)
+    else:
+        raise ValueError('Invalid base network')
 
     model.use_preset('evaluate')
     train_chain = MultiboxTrainChain(model)
@@ -140,16 +183,19 @@ def main():
         model.to_gpu()
 
     train = TransformDataset(
-        RoadDamageDataset(data_dir, split='train'),
+        RoadDamageDataset(args.data_dir, split='train'),
         Transform(model.coder, model.insize, model.mean)
     )
+
+    train = TransformDataset(train, preprocessing)
+
     train_iter = chainer.iterators.SerialIterator(train, args.batchsize)
 
-    test = RoadDamageDataset(data_dir, split='val')
+    test = RoadDamageDataset(args.data_dir, split='val')
     test_iter = chainer.iterators.SerialIterator(
         test, args.batchsize, repeat=False, shuffle=False)
 
-    # initial lr is set to 5e-4 by ExponentialShift
+    # initial lr is set to 3e-4 by ExponentialShift
     optimizer = chainer.optimizers.MomentumSGD()
     optimizer.setup(train_chain)
     for param in train_chain.params():
@@ -161,7 +207,7 @@ def main():
     updater = training.StandardUpdater(train_iter, optimizer, device=args.gpu)
     trainer = training.Trainer(updater, (120000, 'iteration'), args.out)
     trainer.extend(
-        extensions.ExponentialShift('lr', 0.1, init=5e-4),
+        extensions.ExponentialShift('lr', 0.1, init=3e-4),
         trigger=triggers.ManualScheduleTrigger([80000, 100000], 'iteration'))
 
     trainer.extend(
@@ -193,7 +239,7 @@ def main():
     trainer.run()
 
     model.to_cpu()
-    serializers.save_npz("model.npz", model)
+    serializers.save_npz("model-detector.npz", model)
 
 
 if __name__ == '__main__':
