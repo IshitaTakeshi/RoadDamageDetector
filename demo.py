@@ -22,14 +22,12 @@ def main():
     args = parser.parse_args()
 
     if args.base_network == 'vgg16':
-        # pretrained_extractor is currently not available for this class
         model = chainercv.links.SSD300(
            n_fg_class=len(roaddamage_label_names),
            pretrained_model=args.pretrained_model)
     elif args.base_network == 'resnet101':
         model = ssd_resnet101.SSD224(
            n_fg_class=len(roaddamage_label_names),
-           pretrained_extractor=args.pretrained_extractor,
            pretrained_model=args.pretrained_model)
     else:
         raise ValueError('Invalid base network')
