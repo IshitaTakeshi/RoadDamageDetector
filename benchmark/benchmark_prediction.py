@@ -49,8 +49,8 @@ parser.add_argument('--base-network', choices=('vgg16', 'resnet101'),
                     default='vgg16', help='Base network')
 parser.add_argument('--pretrained-model', required=True)
 parser.add_argument('--gpu', type=int, default=-1)
-parser.add_argument('--n-images', type=int, default=2000)
-parser.add_argument('--n-executions', type=int, default=1)
+parser.add_argument('--n-images', type=int, default=500)
+parser.add_argument('--n-executions', type=int, default=20)
 
 args = parser.parse_args()
 
