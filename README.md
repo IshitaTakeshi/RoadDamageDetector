@@ -22,8 +22,38 @@ cd anomaly_detection
 
 ## 学習
 
+### 識別器の学習
+
+基本的には以下のコマンドですぐに学習が行えるようになっている．
+
 ```
-python3 train.py --gpu <gpu id>
+python3 train_detector.py --base-network <vgg16 or resnet101> --gpu <gpu id>
+```
+
+その他詳細は
+
+```
+python3 train_detector.py -h
+```
+
+で確認できる．
+
+
+### ResNet-101を用いる場合
+Base networkとしてResNet-101を用いる場合は，学習済みモデルを自分でダウンロードする必要がある．
+方法は[Chainerのドキュメント](https://docs.chainer.org/en/stable/reference/generated/chainer.links.ResNet101Layers.html)に記述されている．
+
+### Base networkの学習 (ResNet-101のみ)
+精度向上の試みとしてbase networkそのものを事前に学習することができる．この機能は現在ResNet-101のみに対して有効である．
+
+```
+python3 train_extractor.py --gpu <gpu id>
+```
+
+得られたモデル`model-extractor.npz`を`--pretrained-extractor`オプションで指定することで，学習済みのbase networkをSSDに組み込むことができる．
+
+```
+python3 train_detector.py --base-network resnet101 --gpu <gpu id> --pretrained-extractor model-extractor.npz
 ```
 
 ## 実行
@@ -31,7 +61,7 @@ python3 train.py --gpu <gpu id>
 学習済みモデルを用いる場合はモデルファイル([link](https://drive.google.com/drive/u/0/folders/1T_LwA8sjK_yoE7Z7Hv22Dz20G-GNxn1Z))をダウンロードしておく．
 
 ```
-python3 demo.py --gpu <gpu id> --pretrained_model models/ssd300-vgg16-v0.1/model.npz <path to image>
+python3 demo.py --base-network <base network> --gpu <gpu id> --pretrained_model models/ssd300-vgg16-v0.1/model.npz <path to image>
 ```
 
 ### データ
