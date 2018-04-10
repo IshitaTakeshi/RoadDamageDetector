@@ -1,7 +1,7 @@
 RoadDamageDetector in Chainer
 =============================
 
-Chainer版[RoadDamageDetector](https://github.com/sekilab/RoadDamageDetector)の実装
+[RoadDamageDetector](https://github.com/sekilab/RoadDamageDetector) を参考にした道路損傷検出モデルのChainerによる実装
 
 SSD(Single Shot Detector)を用いて道路損傷の検出を行うことができる．
 
@@ -40,7 +40,7 @@ python3 train_detector.py -h
 
 
 ### ResNet-101を用いる場合
-Base networkとしてResNet-101を用いる場合は，学習済みモデルを自分でダウンロードする必要がある．
+Base networkとしてResNet-101を用いる場合は，学習済みモデルを自分でダウンロードする必要がある．  
 方法は[Chainerのドキュメント](https://docs.chainer.org/en/stable/reference/generated/chainer.links.ResNet101Layers.html)に記述されている．
 
 ### Base networkの学習 (ResNet-101のみ)
