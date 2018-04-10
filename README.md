@@ -40,7 +40,7 @@ python3 train_detector.py -h
 
 
 ### ResNet-101を用いる場合
-ベースネットワークとしてResNet-101を用いる場合は，学習済みモデルを自分でダウンロードする必要がある．  
+ベースネットワークとしてResNet-101を用いる場合は，Caffeの学習済みモデルを自分でダウンロードする必要がある．  
 方法は[Chainerのドキュメント](https://docs.chainer.org/en/stable/reference/generated/chainer.links.ResNet101Layers.html)に記述されている．
 
 ### ベースネットワークの学習 (ResNet-101のみ)
