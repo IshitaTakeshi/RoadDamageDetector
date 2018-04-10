@@ -53,7 +53,9 @@ python3 train_extractor.py --gpu <gpu id>
 得られたモデル`model-extractor.npz`を`--pretrained-extractor`オプションで指定することで，学習済みのベースネットワークをSSDに組み込むことができる．
 
 ```
-python3 train_detector.py --base-network resnet101 --gpu <gpu id> --pretrained-extractor model-extractor.npz
+python3 train_detector.py --base-network resnet101 \
+                          --gpu <gpu id> \
+                          --pretrained-extractor model-extractor.npz
 ```
 
 ## 実行
@@ -61,7 +63,9 @@ python3 train_detector.py --base-network resnet101 --gpu <gpu id> --pretrained-e
 学習済みモデルを用いる場合はモデルファイル([link](https://drive.google.com/drive/u/0/folders/1T_LwA8sjK_yoE7Z7Hv22Dz20G-GNxn1Z))をダウンロードしておく．
 
 ```
-python3 demo.py --base-network <base network> --gpu <gpu id> --pretrained_model models/ssd300-vgg16-v0.1/model.npz <path to image>
+python3 demo.py --base-network <base network> \
+                --gpu <gpu id> \
+                --pretrained_model models/ssd300-vgg16-v0.1/model.npz <path to image>
 ```
 
 ### データ
