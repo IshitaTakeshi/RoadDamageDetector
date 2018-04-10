@@ -1,5 +1,9 @@
 import timeit
 import argparse
+import sys
+import os
+
+sys.path.append(os.getcwd())
 
 
 def setup(base_network, pretrained_model, gpu, n_images):
@@ -29,9 +33,10 @@ elif base_network == 'resnet101':
 else:
     ValueError("Invalid model")
 
-if {2} >= 0:
-    chainer.cuda.get_device_from_id(0).use()
-    model.to_gpu()
+gpu_id = {2}
+if gpu_id >= 0:
+    chainer.cuda.get_device_from_id(gpu_id).use()
+    model.to_gpu(gpu_id)
 
 n_images = {3}
 
@@ -44,20 +49,29 @@ images = np.array(images)
     return s.format(base_network, pretrained_model, gpu, n_images)
 
 
-parser = argparse.ArgumentParser()
-parser.add_argument('--base-network', choices=('vgg16', 'resnet101'),
-                    default='vgg16', help='Base network')
-parser.add_argument('--pretrained-model', required=True)
-parser.add_argument('--gpu', type=int, default=-1)
-parser.add_argument('--n-images', type=int, default=500)
-parser.add_argument('--n-executions', type=int, default=20)
+args = [
+    ('vgg16', 'models/ssd300-vgg16-v0.2/model.npz', -1),
+    ('vgg16', 'models/ssd300-vgg16-v0.2/model.npz', 0),
+    ('resnet101', 'models/ssd224-resnet101-v0.1/model.npz', -1),
+    ('resnet101', 'models/ssd224-resnet101-v0.1/model.npz', 0)
+]
 
-args = parser.parse_args()
+n_executions = 10
 
+for n_images in range(10, 60, 10):
+    print("Number of images     : {}".format(n_images))
+    print("Number of executions : {}".format(n_executions))
 
-timer = timeit.Timer(
-    'model.predict(images)',
-    setup=setup(args.base_network, args.pretrained_model, args.gpu,
-                args.n_images))
+    for base_network, pretrained_model, gpu in args:
+        print("")
+        print("Base network     : {}".format(base_network))
+        print("Pretrained model : {}".format(pretrained_model))
+        print("GPU ID           : {}".format(gpu))
 
-print("{} [s]".format(timer.timeit(number=args.n_executions)))
+        timer = timeit.Timer(
+            'model.predict(images)',
+            setup=setup(base_network, pretrained_model, gpu, n_images))
+        t = timer.timeit(number=n_executions)
+
+        print("{} [s]".format(t))
+    print("")
