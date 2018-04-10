@@ -10,13 +10,8 @@ rcParams['figure.figsize'] = 16, 20
 rcParams['figure.dpi'] = 240
 rcParams['font.size'] = 18
 
-
 linestyles = ['-', '--', ':', '-.']
 
-
-logfile_path = sys.argv[1]
-with open(logfile_path, "r") as f:
-    logs = json.load(f)
 
 
 def extract(logs, keys):
@@ -32,6 +27,15 @@ def extract(logs, keys):
     L = list(zip(*[_extract(log) for log in logs]))
     return np.array(L, dtype=np.double)
 
+
+if len(sys.argv) < 2:
+    print("Usage $python3 showreport.py <path to log file>")
+    exit(0)
+
+
+logfile_path = sys.argv[1]
+with open(logfile_path, "r") as f:
+    logs = json.load(f)
 
 L = extract(logs, keys=[
     "iteration",
