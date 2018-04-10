@@ -7,7 +7,7 @@ SSD(Single Shot Detector)を用いて道路損傷の検出を行うことがで�
 
 詳細は以下を参照
 
-* [Qiita](https://qiita.com/IshitaTakeshi/private/915de731d8081e711ae5)
+* [Qiita](https://qiita.com/IshitaTakeshi/items/915de731d8081e711ae5)
 * [GitHub wiki](github.com/IshitaTakeshi/anomaly_detection/wiki)
 
 # 環境設定
