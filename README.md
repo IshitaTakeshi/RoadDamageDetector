@@ -40,17 +40,17 @@ python3 train_detector.py -h
 
 
 ### ResNet-101を用いる場合
-Base networkとしてResNet-101を用いる場合は，学習済みモデルを自分でダウンロードする必要がある．  
+ベースネットワークとしてResNet-101を用いる場合は，学習済みモデルを自分でダウンロードする必要がある．  
 方法は[Chainerのドキュメント](https://docs.chainer.org/en/stable/reference/generated/chainer.links.ResNet101Layers.html)に記述されている．
 
-### Base networkの学習 (ResNet-101のみ)
-精度向上の試みとしてbase networkそのものを事前に学習することができる．この機能は現在ResNet-101のみに対して有効である．
+### ベースネットワークの学習 (ResNet-101のみ)
+精度向上の試みとしてベースネットワークそのものを事前に学習することができる．この機能は現在ResNet-101のみに対して有効である．
 
 ```
 python3 train_extractor.py --gpu <gpu id>
 ```
 
-得られたモデル`model-extractor.npz`を`--pretrained-extractor`オプションで指定することで，学習済みのbase networkをSSDに組み込むことができる．
+得られたモデル`model-extractor.npz`を`--pretrained-extractor`オプションで指定することで，学習済みのベースネットワークをSSDに組み込むことができる．
 
 ```
 python3 train_detector.py --base-network resnet101 --gpu <gpu id> --pretrained-extractor model-extractor.npz
