@@ -68,6 +68,6 @@ python3 demo.py --base-network <base network> \
 ```
 
 ## データ
-データの詳細は[wiki](https://github.com/PasonaTech-Inc/anomaly_detection/wiki/Road-Damage-Dataset)に書かれている．  
+データの詳細は[wiki](https://github.com/IshitaTakeshi/RoadDamageDetector/wiki/Road-Damage-Dataset)に書かれている．  
 RoadDamageDatasetの全ての地区のデータをマージし，学習と評価に用いている．  
 学習には全地区のtrainをマージしたものを，評価には全地区のvalデータをマージしたものを用いている．
