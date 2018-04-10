@@ -145,7 +145,8 @@ def main():
                         help='Pretrained SSD model')
     parser.add_argument('--pretrained-extractor', default='auto',
                         help='Pretrained CNN model to extract feature maps')
-    parser.add_argument('--out', default='result-detection')
+    parser.add_argument('--out', default='result-detection',
+                        help='Directory to output the result')
     parser.add_argument('--resume', default=None,
                         help='Initialize the trainer from given file')
 
