@@ -8,7 +8,7 @@ SSD(Single Shot Detector)を用いて道路損傷の検出を行うことがで�
 詳細は以下を参照
 
 * [Qiita](https://qiita.com/IshitaTakeshi/items/915de731d8081e711ae5)
-* [GitHub wiki](github.com/IshitaTakeshi/anomaly_detection/wiki)
+* [GitHub wiki](https://github.com/IshitaTakeshi/RoadDamageDetector/wiki)
 
 # 環境設定
 
@@ -29,6 +29,8 @@ cd anomaly_detection
 ```
 python3 train_detector.py --base-network <vgg16 or resnet101> --gpu <gpu id>
 ```
+
+GPU IDに負の値を指定すればCPUで実行することもできる．
 
 その他のオプションは
 
@@ -59,7 +61,7 @@ python3 train_detector.py --base-network resnet101 \
 ```
 
 # 実行
-学習済みモデルを用いる場合はモデルファイル([link](https://drive.google.com/drive/u/0/folders/1T_LwA8sjK_yoE7Z7Hv22Dz20G-GNxn1Z))をダウンロードしておく．
+学習済みモデルを用いる場合はモデルファイル([link](https://drive.google.com/drive/u/0/folders/1T_LwA8sjK_yoE7Z7Hv22Dz20G-GNxn1Z))をダウンロードしておく．  
 
 ```
 python3 demo.py --base-network <base network> \
@@ -67,7 +69,9 @@ python3 demo.py --base-network <base network> \
                 --pretrained_model models/ssd300-vgg16-v0.1/model.npz <path to image>
 ```
 
+学習時と同様に，GPU IDに負の値を指定すればCPUで実行することもできる．
+
 ## データ
-データの詳細は[wiki](https://github.com/PasonaTech-Inc/anomaly_detection/wiki/Road-Damage-Dataset)に書かれている．  
+データの詳細は[wiki](https://github.com/IshitaTakeshi/RoadDamageDetector/wiki/Road-Damage-Dataset)に書かれている．  
 RoadDamageDatasetの全ての地区のデータをマージし，学習と評価に用いている．  
 学習には全地区のtrainをマージしたものを，評価には全地区のvalデータをマージしたものを用いている．
