@@ -1,9 +1,9 @@
 RoadDamageDetector in Chainer
 =============================
 
-[RoadDamageDetector](https://github.com/sekilab/RoadDamageDetector) を参考にした道路損傷検出モデルのChainerによる実装
+[RoadDamageDetector](https://github.com/sekilab/RoadDamageDetector)を参考にした道路損傷検出モデルのChainerによる実装
 
-SSD(Single Shot Detector)を用いて道路損傷の検出を行うことができる．
+道路のひび割れやセンターラインのかすれなどを検出することができる．  
 
 <img src="images/detection_example1.png" width="600px">
 <img src="images/detection_example2.png" width="600px">
