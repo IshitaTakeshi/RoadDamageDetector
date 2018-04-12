@@ -5,6 +5,16 @@ RoadDamageDetector in Chainer
 
 SSD(Single Shot Detector)を用いて道路損傷の検出を行うことができる．
 
+<img src="images/detection_example1.png" width="600px">
+<img src="images/detection_example2.png" width="600px">
+<img src="images/detection_example3.png" width="600px">
+<img src="images/detection_example4.png" width="600px">
+
+データセットは[CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.en)ライセンスのもとで配布されている．
+<a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/deed.en"><img alt="Creative Commons License" style="border-width:0" src="https://licensebuttons.net/l/by-sa/4.0/88x31.png" /></a>  
+
+<br />
+
 詳細は以下を参照
 
 * [Qiita](https://qiita.com/IshitaTakeshi/items/915de731d8081e711ae5)
