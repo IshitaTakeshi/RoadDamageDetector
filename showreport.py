@@ -2,6 +2,8 @@ import sys
 import json
 import random
 
+from os.path import basename
+
 import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib import rcParams
@@ -54,22 +56,21 @@ for loss_, label in zip(loss, labels):
     plt.plot(iteration, loss_, label=label)
 plt.legend(prop={'size': 16})
 
-
-L = extract(logs, keys=[
-    "iteration",
+keys = [
     'validation/main/ap/D00',
     'validation/main/ap/D01',
     'validation/main/ap/D10',
     'validation/main/ap/D11',
     'validation/main/ap/D20',
-    'validation/main/ap/D30',
     'validation/main/ap/D40',
     'validation/main/ap/D43',
     'validation/main/ap/D44',
     'validation/main/map'
-])
+]
 
-labels = ['D00', 'D01', 'D10', 'D11', 'D20', 'D40', 'D43', 'D44', 'mAP']
+L = extract(logs, keys=["iteration"] + keys)
+
+labels = [basename(key) for key in keys]
 
 iteration, aps = L[0], L[1:]
 
