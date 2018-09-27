@@ -24,8 +24,8 @@ RoadDamageDetector in Chainer
 依存パッケージのダウンロードやデータのダウンロード・展開は全て自動で行われる．
 
 ```
-git clone https://github.com/PasonaTech-Inc/anomaly_detection.git
-cd anomaly_detection
+git clone https://github.com/IshitaTakeshi/RoadDamageDetector.git
+cd RoadDamageDetector
 ./setting-environment.sh
 ```
 
