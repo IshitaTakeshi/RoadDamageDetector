@@ -22,6 +22,7 @@ RoadDamageDetector in Chainer
 # 環境設定
 
 依存パッケージのダウンロードやデータのダウンロード・展開は全て自動で行われる．
+GPUを用いる場合はCuPyを[手順](https://docs-cupy.chainer.org/en/stable/install.html)にしたがってインストールすることをおすすめする．
 
 ```
 git clone https://github.com/IshitaTakeshi/RoadDamageDetector.git
