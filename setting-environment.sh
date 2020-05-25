@@ -15,6 +15,6 @@ apt install -y python3-tk libglib2.0-0 libsm-dev
 pip3 install -U matplotlib opencv-python
 
 # download and setup dataset
-wget -c https://s3-ap-northeast-1.amazonaws.com/mycityreport/RoadDamageDataset.tar.gz
+wget -c https://mycityreport.s3-ap-northeast-1.amazonaws.com/02_RoadDamageDataset/RoadDamageDataset.tar.gz
 tar xvf RoadDamageDataset.tar.gz
 ./merge_dasatet.sh
